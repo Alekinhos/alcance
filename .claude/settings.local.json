@@ -4,7 +4,18 @@
       "Bash(supabase --version)",
       "Bash(vercel --version)",
       "Bash(npm install:*)",
-      "Bash(npx:*)"
+      "Bash(npx:*)",
+      "Bash(npm list:*)",
+      "Bash(gh --version)",
+      "Bash(gh auth:*)",
+      "Bash(export PATH=\"$PATH:/c/Users/Alek/AppData/Local/Programs/GitHub CLI\")",
+      "Bash(supabase projects:*)",
+      "Bash(supabase db:*)",
+      "Bash(vercel link:*)",
+      "Bash(vercel:*)",
+      "Bash(npm run:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"feat: sistema completo de gestão da Igreja Alcance:*)"
     ]
   }
 }
