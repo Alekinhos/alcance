@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   Church,
   LogOut,
+  Ticket,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { criarClienteSupabase } from '@/lib/supabase/client'
@@ -50,6 +51,12 @@ const itensNav = [
     rotulo: 'Blog',
     icone: FileText,
     papeis: ['admin', 'pastor', 'lider'] as PapelUsuario[],
+  },
+  {
+    href: '/dashboard/convites',
+    rotulo: 'Convites',
+    icone: Ticket,
+    papeis: ['admin', 'pastor'] as PapelUsuario[],
   },
 ]
 

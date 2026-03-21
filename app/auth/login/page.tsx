@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Church } from 'lucide-react'
 import { Campo } from '@/components/ui/campo'
 import { Botao } from '@/components/ui/botao'
+import Link from 'next/link'
 
 export default function PaginaLogin() {
   const [email, setEmail] = useState('')
@@ -77,6 +78,13 @@ export default function PaginaLogin() {
               Entrar
             </Botao>
           </form>
+
+          <p className="mt-4 text-center text-sm text-gray-500">
+            Tem um código de convite?{' '}
+            <Link href="/auth/cadastro" className="font-medium text-blue-600 hover:text-blue-800">
+              Criar conta
+            </Link>
+          </p>
         </div>
       </div>
     </div>

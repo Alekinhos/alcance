@@ -15,7 +15,10 @@
       "Bash(vercel:*)",
       "Bash(npm run:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m \"feat: sistema completo de gestão da Igreja Alcance:*)"
+      "Bash(git commit -m \"feat: sistema completo de gestão da Igreja Alcance:*)",
+      "Bash(git push:*)",
+      "Bash(supabase migration:*)",
+      "Bash(git commit -m \"feat: módulo de convites para cadastro híbrido:*)"
     ]
   }
 }

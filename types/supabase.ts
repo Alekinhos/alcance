@@ -180,6 +180,33 @@ export interface Database {
           }
         ]
       }
+      convites: {
+        Row: {
+          id: string
+          codigo: string
+          usado: boolean
+          usado_por: string | null
+          criado_por: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          codigo: string
+          usado?: boolean
+          usado_por?: string | null
+          criado_por?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          codigo?: string
+          usado?: boolean
+          usado_por?: string | null
+          criado_por?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: { [_ in never]: never }
     Functions: { [_ in never]: never }
@@ -197,3 +224,4 @@ export type Profile = Database['public']['Tables']['profiles']['Row']
 export type Evento = Database['public']['Tables']['eventos']['Row']
 export type Transacao = Database['public']['Tables']['transacoes']['Row']
 export type Post = Database['public']['Tables']['posts']['Row']
+export type Convite = Database['public']['Tables']['convites']['Row']
