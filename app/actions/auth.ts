@@ -79,7 +79,7 @@ export async function solicitarResetSenha(formData: FormData) {
   const origin = headersList.get('origin') ?? ''
 
   const { error } = await supabase.auth.resetPasswordForEmail(resultado.data.email, {
-    redirectTo: `${origin}/auth/redefinir-senha`,
+    redirectTo: `${origin}/auth/callback?next=/auth/redefinir-senha`,
   })
 
   if (error) {
@@ -104,12 +104,11 @@ export async function gerarConvite() {
     return { erro: 'Sem permissão para gerar convites.' }
   }
 
-  const codigo = randomBytes(6)
-    .toString('base64')
-    .toUpperCase()
-    .replace(/[^A-Z0-9]/g, '')
-    .slice(0, 8)
-    .replace(/(.{4})/, '$1-')
+  const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  const bytes = randomBytes(8)
+  const parte1 = Array.from({ length: 4 }, (_, i) => CHARS[bytes[i] % CHARS.length]).join('')
+  const parte2 = Array.from({ length: 4 }, (_, i) => CHARS[bytes[i + 4] % CHARS.length]).join('')
+  const codigo = `${parte1}-${parte2}`
 
   const { error } = await supabase
     .from('convites')

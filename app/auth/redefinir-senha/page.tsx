@@ -46,23 +46,24 @@ function FormRedefinirSenha() {
   const forca = calcularForca(senhaAtual)
 
   useEffect(() => {
-    const tokenHash = searchParams.get('token_hash')
-    const type = searchParams.get('type')
-
-    if (!tokenHash || type !== 'recovery') {
-      setStatus('erro')
-      return
-    }
-
-    supabase.auth
-      .verifyOtp({ token_hash: tokenHash, type: 'recovery' })
-      .then(({ error }) => {
-        if (error) {
-          setStatus('erro')
+    // Com PKCE, a sessão já foi trocada pelo /auth/callback.
+    // Verifica se o usuário tem uma sessão ativa do tipo recovery.
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setStatus('pronto')
+      } else {
+        // Fallback: tenta token_hash para links antigos
+        const tokenHash = searchParams.get('token_hash')
+        const type = searchParams.get('type')
+        if (tokenHash && type === 'recovery') {
+          supabase.auth
+            .verifyOtp({ token_hash: tokenHash, type: 'recovery' })
+            .then(({ error }) => setStatus(error ? 'erro' : 'pronto'))
         } else {
-          setStatus('pronto')
+          setStatus('erro')
         }
-      })
+      }
+    })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function onSubmit(data: RedefinirSenhaInput) {

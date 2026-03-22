@@ -10,10 +10,14 @@ import { Botao } from '@/components/ui/botao'
 import { Church, MailCheck } from 'lucide-react'
 import Link from 'next/link'
 import { z } from 'zod'
+import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
 type EmailInput = z.infer<typeof schemaEmail>
 
-export default function PaginaEsqueciSenha() {
+function FormEsqueciSenha() {
+  const searchParams = useSearchParams()
+  const erroLink = searchParams.get('erro') === 'link_invalido'
   const [enviado, setEnviado] = useState(false)
   const [emailEnviado, setEmailEnviado] = useState('')
 
@@ -75,6 +79,11 @@ export default function PaginaEsqueciSenha() {
             </div>
           ) : (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              {erroLink && (
+                <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+                  O link expirou ou é inválido. Solicite um novo abaixo.
+                </div>
+              )}
               <Campo
                 label="Email"
                 type="email"
@@ -102,5 +111,13 @@ export default function PaginaEsqueciSenha() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function PaginaEsqueciSenha() {
+  return (
+    <Suspense>
+      <FormEsqueciSenha />
+    </Suspense>
   )
 }
