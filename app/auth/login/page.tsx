@@ -58,15 +58,22 @@ export default function PaginaLogin() {
               required
               autoComplete="email"
             />
-            <Campo
-              label="Senha"
-              type="password"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              placeholder="••••••••"
-              required
-              autoComplete="current-password"
-            />
+            <div className="space-y-1">
+              <Campo
+                label="Senha"
+                type="password"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                placeholder="••••••••"
+                required
+                autoComplete="current-password"
+              />
+              <div className="flex justify-end">
+                <Link href="/auth/esqueci-senha" className="text-xs text-blue-600 hover:text-blue-800">
+                  Esqueci a senha
+                </Link>
+              </div>
+            </div>
 
             {erro && (
               <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">

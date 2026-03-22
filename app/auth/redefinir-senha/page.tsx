@@ -1,15 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { cadastrarComConvite } from '@/app/actions/auth'
-import { schemaCadastro, type CadastroInput } from '@/lib/validations/auth'
+import { schemaRedefinirSenha, type RedefinirSenhaInput } from '@/lib/validations/auth'
+import { criarClienteSupabase } from '@/lib/supabase/client'
 import { Campo } from '@/components/ui/campo'
 import { Botao } from '@/components/ui/botao'
-import { Church, KeyRound } from 'lucide-react'
+import { Church } from 'lucide-react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 
 function calcularForca(senha: string): { nivel: 0 | 1 | 2 | 3; label: string; cor: string } {
@@ -24,10 +24,12 @@ function calcularForca(senha: string): { nivel: 0 | 1 | 2 | 3; label: string; co
   return { nivel: 3, label: 'Forte', cor: 'bg-green-500' }
 }
 
-function FormCadastro() {
+function FormRedefinirSenha() {
   const searchParams = useSearchParams()
-  const codigoInicial = searchParams.get('codigo') ?? ''
+  const router = useRouter()
+  const supabase = criarClienteSupabase()
 
+  const [status, setStatus] = useState<'verificando' | 'pronto' | 'erro'>('verificando')
   const [erroServidor, setErroServidor] = useState('')
 
   const {
@@ -35,21 +37,68 @@ function FormCadastro() {
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<CadastroInput>({
-    resolver: zodResolver(schemaCadastro),
-    defaultValues: { codigo: codigoInicial },
+  } = useForm<RedefinirSenhaInput>({
+    resolver: zodResolver(schemaRedefinirSenha),
     mode: 'onTouched',
   })
 
   const senhaAtual = watch('senha') ?? ''
   const forca = calcularForca(senhaAtual)
 
-  async function onSubmit(data: CadastroInput) {
+  useEffect(() => {
+    const tokenHash = searchParams.get('token_hash')
+    const type = searchParams.get('type')
+
+    if (!tokenHash || type !== 'recovery') {
+      setStatus('erro')
+      return
+    }
+
+    supabase.auth
+      .verifyOtp({ token_hash: tokenHash, type: 'recovery' })
+      .then(({ error }) => {
+        if (error) {
+          setStatus('erro')
+        } else {
+          setStatus('pronto')
+        }
+      })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function onSubmit(data: RedefinirSenhaInput) {
     setErroServidor('')
-    const formData = new FormData()
-    Object.entries(data).forEach(([k, v]) => formData.append(k, v))
-    const resultado = await cadastrarComConvite(formData)
-    if (resultado?.erro) setErroServidor(resultado.erro)
+    const { error } = await supabase.auth.updateUser({ password: data.senha })
+    if (error) {
+      setErroServidor('Erro ao redefinir senha. O link pode ter expirado.')
+      return
+    }
+    router.push('/dashboard')
+  }
+
+  if (status === 'verificando') {
+    return (
+      <div className="flex flex-col items-center gap-3">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+        <p className="text-sm text-gray-500">Verificando link...</p>
+      </div>
+    )
+  }
+
+  if (status === 'erro') {
+    return (
+      <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 shadow-sm text-center space-y-4">
+        <p className="font-medium text-gray-900">Link inválido ou expirado</p>
+        <p className="text-sm text-gray-500">
+          Solicite um novo link de recuperação de senha.
+        </p>
+        <Link
+          href="/auth/esqueci-senha"
+          className="inline-block text-sm font-medium text-blue-600 hover:text-blue-800"
+        >
+          Solicitar novo link
+        </Link>
+      </div>
+    )
   }
 
   return (
@@ -58,49 +107,15 @@ function FormCadastro() {
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600">
           <Church className="h-8 w-8 text-white" />
         </div>
-        <h1 className="mt-4 text-2xl font-bold text-gray-900">Criar Conta</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Você precisa de um código de convite para se cadastrar.
-        </p>
+        <h1 className="mt-4 text-2xl font-bold text-gray-900">Nova Senha</h1>
+        <p className="mt-1 text-sm text-gray-500">Escolha uma senha forte para sua conta.</p>
       </div>
 
       <div className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Código de convite */}
-          <div className="rounded-lg bg-blue-50 p-4">
-            <div className="mb-2 flex items-center gap-2 text-sm font-medium text-blue-700">
-              <KeyRound className="h-4 w-4" />
-              Código de Convite
-            </div>
-            <input
-              {...register('codigo')}
-              placeholder="XXXX-XXXX"
-              maxLength={9}
-              className="w-full rounded-md border border-blue-200 bg-white px-3 py-2 text-center font-mono text-lg font-bold uppercase tracking-widest text-blue-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
-            {errors.codigo && (
-              <p className="mt-1 text-xs text-red-600">{errors.codigo.message}</p>
-            )}
-          </div>
-
-          <Campo
-            label="Nome completo"
-            {...register('nome')}
-            erro={errors.nome?.message}
-            autoComplete="name"
-          />
-
-          <Campo
-            label="Email"
-            type="email"
-            {...register('email')}
-            erro={errors.email?.message}
-            autoComplete="email"
-          />
-
           <div className="space-y-1">
             <Campo
-              label="Senha"
+              label="Nova senha"
               type="password"
               {...register('senha')}
               erro={errors.senha?.message}
@@ -140,7 +155,7 @@ function FormCadastro() {
           </div>
 
           <Campo
-            label="Confirmar senha"
+            label="Confirmar nova senha"
             type="password"
             {...register('confirmar_senha')}
             erro={errors.confirmar_senha?.message}
@@ -152,22 +167,15 @@ function FormCadastro() {
           )}
 
           <Botao type="submit" carregando={isSubmitting} className="w-full" tamanho="lg">
-            Criar Conta
+            Redefinir Senha
           </Botao>
         </form>
-
-        <p className="mt-4 text-center text-sm text-gray-500">
-          Já tem uma conta?{' '}
-          <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-800">
-            Entrar
-          </Link>
-        </p>
       </div>
     </div>
   )
 }
 
-export default function PaginaCadastro() {
+export default function PaginaRedefinirSenha() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <Suspense
@@ -175,7 +183,7 @@ export default function PaginaCadastro() {
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
         }
       >
-        <FormCadastro />
+        <FormRedefinirSenha />
       </Suspense>
     </div>
   )

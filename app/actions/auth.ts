@@ -4,26 +4,30 @@ import { criarClienteServidor, criarClienteAdmin } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { randomBytes } from 'crypto'
+import { headers } from 'next/headers'
+import { schemaCadastro, schemaEmail } from '@/lib/validations/auth'
 
 export async function cadastrarComConvite(formData: FormData) {
   const supabase = await criarClienteServidor()
   const supabaseAdmin = await criarClienteAdmin()
 
-  const nome = formData.get('nome') as string
-  const email = formData.get('email') as string
-  const senha = formData.get('senha') as string
-  const confirmarSenha = formData.get('confirmar_senha') as string
-  const codigo = (formData.get('codigo') as string).trim().toUpperCase()
-
-  if (senha !== confirmarSenha) {
-    return { erro: 'As senhas não coincidem.' }
+  const raw = {
+    codigo: ((formData.get('codigo') as string) ?? '').trim().toUpperCase(),
+    nome: formData.get('nome') as string,
+    email: formData.get('email') as string,
+    senha: formData.get('senha') as string,
+    confirmar_senha: formData.get('confirmar_senha') as string,
   }
 
-  if (senha.length < 6) {
-    return { erro: 'A senha deve ter pelo menos 6 caracteres.' }
+  const resultado = schemaCadastro.safeParse(raw)
+  if (!resultado.success) {
+    const erros = resultado.error.flatten().fieldErrors
+    const primeiro = Object.values(erros).flat()[0]
+    return { erro: primeiro ?? 'Dados inválidos.' }
   }
 
-  // Verificar se o código de convite é válido
+  const { codigo, nome, email, senha } = resultado.data
+
   const { data: convite, error: erroConvite } = await supabase
     .from('convites')
     .select('id, usado')
@@ -38,7 +42,6 @@ export async function cadastrarComConvite(formData: FormData) {
     return { erro: 'Este código de convite já foi utilizado.' }
   }
 
-  // Criar usuário no Supabase Auth
   const { data: novoUsuario, error: erroAuth } = await supabaseAdmin.auth.admin.createUser({
     email,
     password: senha,
@@ -53,16 +56,37 @@ export async function cadastrarComConvite(formData: FormData) {
     return { erro: erroAuth?.message ?? 'Erro ao criar conta. Tente novamente.' }
   }
 
-  // Marcar convite como usado
   await supabase
     .from('convites')
     .update({ usado: true, usado_por: novoUsuario.user.id })
     .eq('id', convite.id)
 
-  // Fazer login automaticamente
   await supabase.auth.signInWithPassword({ email, password: senha })
 
   redirect('/dashboard')
+}
+
+export async function solicitarResetSenha(formData: FormData) {
+  const supabase = await criarClienteServidor()
+
+  const raw = { email: formData.get('email') as string }
+  const resultado = schemaEmail.safeParse(raw)
+  if (!resultado.success) {
+    return { erro: 'Email inválido.' }
+  }
+
+  const headersList = await headers()
+  const origin = headersList.get('origin') ?? ''
+
+  const { error } = await supabase.auth.resetPasswordForEmail(resultado.data.email, {
+    redirectTo: `${origin}/auth/redefinir-senha`,
+  })
+
+  if (error) {
+    return { erro: 'Erro ao enviar o email. Tente novamente.' }
+  }
+
+  return { sucesso: true }
 }
 
 export async function gerarConvite() {
@@ -80,7 +104,6 @@ export async function gerarConvite() {
     return { erro: 'Sem permissão para gerar convites.' }
   }
 
-  // Gerar código legível: 3 grupos de 4 letras/números
   const codigo = randomBytes(6)
     .toString('base64')
     .toUpperCase()
