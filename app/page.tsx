@@ -9,11 +9,9 @@ export default async function PaginaInicial() {
   const supabase = await criarClienteServidor()
 
   const [
-    { count: totalMembros },
     { data: proximosEventos },
     { data: ultimosPosts },
   ] = await Promise.all([
-    supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase
       .from('eventos')
       .select('*')
@@ -33,10 +31,18 @@ export default async function PaginaInicial() {
       <NavPublica />
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#111111] via-[#1e1e1e] to-[#2a2a2a] py-28 text-center md:py-40">
-        {/* Decoração de fundo */}
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-5">
-          <Church className="h-[32rem] w-[32rem] text-white" />
+      <section className="relative overflow-hidden py-28 text-center md:py-40">
+        {/* Imagem de fundo desfocada */}
+        <div className="pointer-events-none absolute inset-0">
+          <Image
+            src="/Cruz.png"
+            alt=""
+            fill
+            className="object-cover blur-sm scale-105"
+            priority
+          />
+          {/* Overlay escuro */}
+          <div className="absolute inset-0 bg-black/82" />
         </div>
 
         <div className="relative mx-auto max-w-4xl px-4">
@@ -75,11 +81,7 @@ export default async function PaginaInicial() {
 
       {/* Stats */}
       <section className="border-b border-pao bg-white">
-        <div className="mx-auto grid max-w-4xl grid-cols-3 divide-x divide-pao">
-          <div className="px-6 py-8 text-center">
-            <p className="text-3xl font-bold text-porta">{totalMembros ?? 0}</p>
-            <p className="mt-1 text-sm text-pao">Membros</p>
-          </div>
+        <div className="mx-auto grid max-w-4xl grid-cols-2 divide-x divide-pao">
           <div className="px-6 py-8 text-center">
             <p className="text-3xl font-bold text-porta">{proximosEventos?.length ?? 0}</p>
             <p className="mt-1 text-sm text-pao">Próximos Eventos</p>
