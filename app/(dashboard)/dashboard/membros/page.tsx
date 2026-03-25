@@ -30,7 +30,6 @@ export default async function PaginaMembros({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  // Verificar permissão
   const { data: meuPerfil } = await supabase
     .from('profiles')
     .select('papel')
@@ -43,74 +42,115 @@ export default async function PaginaMembros({
   const { busca } = await searchParams
 
   let query = supabase.from('profiles').select('*').order('nome')
-
-  if (busca) {
-    query = query.ilike('nome', `%${busca}%`)
-  }
+  if (busca) query = query.ilike('nome', `%${busca}%`)
 
   const { data: membros } = await query
-
   const podeEditar = papel === 'admin' || papel === 'pastor'
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="p-4 lg:p-6">
+      <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Membros</h1>
-          <p className="mt-1 text-gray-500">{membros?.length ?? 0} membro(s) cadastrado(s)</p>
+          <h1 className="text-2xl font-bold text-porta">Membros</h1>
+          <p className="mt-1 text-pao">{membros?.length ?? 0} membro(s)</p>
         </div>
         {podeEditar && (
           <Link href="/dashboard/membros/novo">
             <Botao>
               <Plus className="mr-2 h-4 w-4" />
-              Novo Membro
+              <span className="hidden sm:inline">Novo Membro</span>
+              <span className="sm:hidden">Novo</span>
             </Botao>
           </Link>
         )}
       </div>
 
       {/* Busca */}
-      <form className="mb-6">
+      <form className="mb-4">
         <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-pao" />
           <input
             name="busca"
             defaultValue={busca}
             type="search"
             placeholder="Buscar por nome..."
-            className="w-full rounded-md border border-gray-300 bg-white py-2 pl-9 pr-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-pao bg-white py-2 pl-9 pr-4 text-sm text-black focus:border-sangue focus:outline-none focus:ring-1 focus:ring-sangue"
           />
         </div>
       </form>
 
-      {/* Tabela de membros */}
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Membro
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Papel
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Grupo/Célula
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Telefone
-              </th>
+      {/* Mobile: cards */}
+      <div className="space-y-3 md:hidden">
+        {membros && membros.length > 0 ? (
+          membros.map((membro) => (
+            <div key={membro.id} className="rounded-lg border border-pao bg-white p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  {membro.foto_url ? (
+                    <Image
+                      src={membro.foto_url}
+                      alt={membro.nome}
+                      width={40}
+                      height={40}
+                      className="h-10 w-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-cordeiro text-sm font-medium text-porta">
+                      {membro.nome.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div>
+                    <p className="font-medium text-porta">{membro.nome}</p>
+                    <p className="text-xs text-pao">{membro.email}</p>
+                  </div>
+                </div>
+                <Badge variante={variantesPapel[membro.papel as PapelUsuario]}>
+                  {rotulosPapel[membro.papel as PapelUsuario]}
+                </Badge>
+              </div>
+              {(membro.grupo || membro.telefone) && (
+                <div className="mt-2 space-y-0.5 text-sm text-pao">
+                  {membro.grupo && <p>Grupo: {membro.grupo}</p>}
+                  {membro.telefone && <p>Tel: {membro.telefone}</p>}
+                </div>
+              )}
               {podeEditar && (
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Ações
-                </th>
+                <div className="mt-3 flex justify-end">
+                  <Link
+                    href={`/dashboard/membros/${membro.id}/editar`}
+                    className="text-sm font-medium text-sangue hover:text-porta"
+                  >
+                    Editar
+                  </Link>
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <p className="rounded-lg border border-pao bg-white p-8 text-center text-pao">
+            Nenhum membro encontrado.
+          </p>
+        )}
+      </div>
+
+      {/* Desktop: tabela */}
+      <div className="hidden md:block overflow-hidden rounded-lg border border-pao bg-white">
+        <table className="w-full">
+          <thead className="bg-cordeiro">
+            <tr>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-porta">Membro</th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-porta">Papel</th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-porta">Grupo/Célula</th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-porta">Telefone</th>
+              {podeEditar && (
+                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-porta">Ações</th>
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-cordeiro">
             {membros && membros.length > 0 ? (
               membros.map((membro) => (
-                <tr key={membro.id} className="hover:bg-gray-50">
+                <tr key={membro.id} className="hover:bg-cordeiro/30">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {membro.foto_url ? (
@@ -122,13 +162,13 @@ export default async function PaginaMembros({
                           className="h-9 w-9 rounded-full object-cover"
                         />
                       ) : (
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-sm font-medium text-blue-700">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-cordeiro text-sm font-medium text-porta">
                           {membro.nome.charAt(0).toUpperCase()}
                         </div>
                       )}
                       <div>
-                        <p className="font-medium text-gray-900">{membro.nome}</p>
-                        <p className="text-xs text-gray-500">{membro.email}</p>
+                        <p className="font-medium text-porta">{membro.nome}</p>
+                        <p className="text-xs text-pao">{membro.email}</p>
                       </div>
                     </div>
                   </td>
@@ -137,17 +177,13 @@ export default async function PaginaMembros({
                       {rotulosPapel[membro.papel as PapelUsuario]}
                     </Badge>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
-                    {membro.grupo ?? '—'}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
-                    {membro.telefone ?? '—'}
-                  </td>
+                  <td className="px-4 py-3 text-sm text-pao">{membro.grupo ?? '—'}</td>
+                  <td className="px-4 py-3 text-sm text-pao">{membro.telefone ?? '—'}</td>
                   {podeEditar && (
                     <td className="px-4 py-3 text-right">
                       <Link
-                        href={`/membros/${membro.id}/editar`}
-                        className="text-sm text-blue-600 hover:text-blue-800"
+                        href={`/dashboard/membros/${membro.id}/editar`}
+                        className="text-sm text-sangue hover:text-porta"
                       >
                         Editar
                       </Link>
@@ -157,7 +193,7 @@ export default async function PaginaMembros({
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                <td colSpan={5} className="px-4 py-8 text-center text-pao">
                   Nenhum membro encontrado.
                 </td>
               </tr>

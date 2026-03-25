@@ -25,9 +25,13 @@ export default async function LayoutDashboard({
   const papelUsuario: PapelUsuario = perfil?.papel ?? 'membro'
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen overflow-hidden bg-cordeiro">
       <BarraLateral papelUsuario={papelUsuario} />
       <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Barra de topo — mobile only */}
+        <div className="flex h-14 shrink-0 items-center border-b border-pao bg-white pl-14 pr-4 lg:hidden">
+          <span className="text-base font-bold text-porta">Alcance</span>
+        </div>
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
     </div>

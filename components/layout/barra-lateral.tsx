@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -11,6 +12,8 @@ import {
   Church,
   LogOut,
   Ticket,
+  Menu,
+  X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { criarClienteSupabase } from '@/lib/supabase/client'
@@ -61,6 +64,7 @@ const itensNav = [
 ]
 
 export function BarraLateral({ papelUsuario }: PropsBarraLateral) {
+  const [aberta, setAberta] = useState(false)
   const caminho = usePathname()
   const router = useRouter()
   const supabase = criarClienteSupabase()
@@ -76,50 +80,88 @@ export function BarraLateral({ papelUsuario }: PropsBarraLateral) {
   )
 
   return (
-    <aside className="flex h-screen w-64 flex-col border-r border-gray-200 bg-white">
-      {/* Logo */}
-      <div className="flex h-16 items-center gap-2 border-b border-gray-200 px-6">
-        <Church className="h-7 w-7 text-blue-600" />
-        <span className="text-lg font-bold text-gray-900">Alcance</span>
-      </div>
+    <>
+      {/* Botão hamburguer — mobile only */}
+      <button
+        className="fixed left-0 top-0 z-50 flex h-14 w-14 items-center justify-center text-porta lg:hidden"
+        onClick={() => setAberta(true)}
+        aria-label="Abrir menu"
+      >
+        <Menu className="h-6 w-6" />
+      </button>
 
-      {/* Navegação */}
-      <nav className="flex-1 overflow-y-auto p-4">
-        <ul className="space-y-1">
-          {itensVisiveis.map((item) => {
-            const Icone = item.icone
-            const ativo = caminho === item.href || (item.href !== '/dashboard' && caminho.startsWith(item.href))
+      {/* Backdrop — mobile only */}
+      {aberta && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={() => setAberta(false)}
+        />
+      )}
 
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={cn(
-                    'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                    ativo
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  )}
-                >
-                  <Icone className="h-5 w-5 flex-shrink-0" />
-                  {item.rotulo}
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
-      </nav>
-
-      {/* Sair */}
-      <div className="border-t border-gray-200 p-4">
+      {/* Sidebar */}
+      <aside
+        className={cn(
+          'fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col border-r border-white/10 bg-porta transition-transform duration-300',
+          'lg:relative lg:z-auto lg:translate-x-0',
+          aberta ? 'translate-x-0' : '-translate-x-full'
+        )}
+      >
+        {/* Botão fechar — mobile only */}
         <button
-          onClick={sair}
-          className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
+          className="absolute right-3 top-3 text-white/60 hover:text-white lg:hidden"
+          onClick={() => setAberta(false)}
+          aria-label="Fechar menu"
         >
-          <LogOut className="h-5 w-5" />
-          Sair
+          <X className="h-5 w-5" />
         </button>
-      </div>
-    </aside>
+
+        {/* Logo */}
+        <div className="flex h-16 items-center gap-2 border-b border-white/10 px-6">
+          <Church className="h-7 w-7 text-sangue" />
+          <span className="text-lg font-bold text-white">Alcance</span>
+        </div>
+
+        {/* Navegação */}
+        <nav className="flex-1 overflow-y-auto p-4">
+          <ul className="space-y-1">
+            {itensVisiveis.map((item) => {
+              const Icone = item.icone
+              const ativo =
+                caminho === item.href ||
+                (item.href !== '/dashboard' && caminho.startsWith(item.href))
+
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={() => setAberta(false)}
+                    className={cn(
+                      'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors',
+                      ativo
+                        ? 'bg-sangue text-white'
+                        : 'text-cordeiro/80 hover:bg-white/10 hover:text-white'
+                    )}
+                  >
+                    <Icone className="h-5 w-5 flex-shrink-0" />
+                    {item.rotulo}
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </nav>
+
+        {/* Sair */}
+        <div className="border-t border-white/10 p-4">
+          <button
+            onClick={sair}
+            className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-cordeiro/80 transition-colors hover:bg-white/10 hover:text-white"
+          >
+            <LogOut className="h-5 w-5" />
+            Sair
+          </button>
+        </div>
+      </aside>
+    </>
   )
 }

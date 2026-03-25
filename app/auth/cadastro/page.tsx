@@ -19,7 +19,7 @@ function calcularForca(senha: string): { nivel: 0 | 1 | 2 | 3; label: string; co
   if (/[A-Z]/.test(senha)) pontos++
   if (/[0-9]/.test(senha)) pontos++
   if (/[^A-Za-z0-9]/.test(senha)) pontos++
-  if (pontos <= 1) return { nivel: 1, label: 'Fraca', cor: 'bg-red-500' }
+  if (pontos <= 1) return { nivel: 1, label: 'Fraca', cor: 'bg-sangue' }
   if (pontos <= 2) return { nivel: 2, label: 'Média', cor: 'bg-yellow-500' }
   return { nivel: 3, label: 'Forte', cor: 'bg-green-500' }
 }
@@ -55,31 +55,31 @@ function FormCadastro() {
   return (
     <div className="w-full max-w-md">
       <div className="mb-8 flex flex-col items-center text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-sangue">
           <Church className="h-8 w-8 text-white" />
         </div>
-        <h1 className="mt-4 text-2xl font-bold text-gray-900">Criar Conta</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="mt-4 text-2xl font-bold text-porta">Criar Conta</h1>
+        <p className="mt-1 text-sm text-pao">
           Você precisa de um código de convite para se cadastrar.
         </p>
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+      <div className="rounded-xl border border-pao bg-white p-8 shadow-sm">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Código de convite */}
-          <div className="rounded-lg bg-blue-50 p-4">
-            <div className="mb-2 flex items-center gap-2 text-sm font-medium text-blue-700">
-              <KeyRound className="h-4 w-4" />
+          <div className="rounded-lg bg-cordeiro p-4">
+            <div className="mb-2 flex items-center gap-2 text-sm font-medium text-porta">
+              <KeyRound className="h-4 w-4 text-sangue" />
               Código de Convite
             </div>
             <input
               {...register('codigo')}
               placeholder="XXXX-XXXX"
               maxLength={9}
-              className="w-full rounded-md border border-blue-200 bg-white px-3 py-2 text-center font-mono text-lg font-bold uppercase tracking-widest text-blue-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-md border border-pao bg-white px-3 py-2 text-center font-mono text-lg font-bold uppercase tracking-widest text-black focus:border-sangue focus:outline-none focus:ring-1 focus:ring-sangue"
             />
             {errors.codigo && (
-              <p className="mt-1 text-xs text-red-600">{errors.codigo.message}</p>
+              <p className="mt-1 text-xs text-sangue">{errors.codigo.message}</p>
             )}
           </div>
 
@@ -114,18 +114,18 @@ function FormCadastro() {
                     <div
                       key={n}
                       className={`h-1 flex-1 rounded-full transition-colors ${
-                        forca.nivel >= n ? forca.cor : 'bg-gray-200'
+                        forca.nivel >= n ? forca.cor : 'bg-cordeiro'
                       }`}
                     />
                   ))}
                 </div>
                 {forca.label && (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-pao">
                     Força da senha:{' '}
                     <span
                       className={
                         forca.nivel === 1
-                          ? 'font-medium text-red-600'
+                          ? 'font-medium text-sangue'
                           : forca.nivel === 2
                             ? 'font-medium text-yellow-600'
                             : 'font-medium text-green-600'
@@ -148,7 +148,7 @@ function FormCadastro() {
           />
 
           {erroServidor && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">{erroServidor}</div>
+            <div className="rounded-md bg-red-50 p-3 text-sm text-sangue">{erroServidor}</div>
           )}
 
           <Botao type="submit" carregando={isSubmitting} className="w-full" tamanho="lg">
@@ -156,9 +156,9 @@ function FormCadastro() {
           </Botao>
         </form>
 
-        <p className="mt-4 text-center text-sm text-gray-500">
+        <p className="mt-4 text-center text-sm text-pao">
           Já tem uma conta?{' '}
-          <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-800">
+          <Link href="/auth/login" className="font-medium text-sangue hover:text-porta">
             Entrar
           </Link>
         </p>
@@ -169,10 +169,10 @@ function FormCadastro() {
 
 export default function PaginaCadastro() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-cordeiro px-4">
       <Suspense
         fallback={
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-sangue border-t-transparent" />
         }
       >
         <FormCadastro />

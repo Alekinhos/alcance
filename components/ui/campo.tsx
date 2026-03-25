@@ -15,23 +15,23 @@ const Campo = forwardRef<HTMLInputElement, PropsCampo>(
     return (
       <div className="flex flex-col gap-1">
         {label && (
-          <label htmlFor={campoId} className="text-sm font-medium text-gray-700">
+          <label htmlFor={campoId} className="text-sm font-medium text-porta">
             {label}
-            {props.required && <span className="ml-1 text-red-500">*</span>}
+            {props.required && <span className="ml-1 text-sangue">*</span>}
           </label>
         )}
         <input
           ref={ref}
           id={campoId}
           className={cn(
-            'rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500',
-            erro && 'border-red-500 focus:border-red-500 focus:ring-red-500',
+            'rounded-md border border-pao bg-white px-3 py-2 text-sm text-black shadow-sm transition-colors placeholder:text-pao focus:border-sangue focus:outline-none focus:ring-1 focus:ring-sangue disabled:cursor-not-allowed disabled:bg-cordeiro disabled:text-porta',
+            erro && 'border-sangue focus:border-sangue focus:ring-sangue',
             className
           )}
           {...props}
         />
-        {ajuda && !erro && <p className="text-xs text-gray-500">{ajuda}</p>}
-        {erro && <p className="text-xs text-red-600">{erro}</p>}
+        {ajuda && !erro && <p className="text-xs text-pao">{ajuda}</p>}
+        {erro && <p className="text-xs text-sangue">{erro}</p>}
       </div>
     )
   }
@@ -51,22 +51,22 @@ const Textarea = forwardRef<HTMLTextAreaElement, PropsTextarea>(
     return (
       <div className="flex flex-col gap-1">
         {label && (
-          <label htmlFor={campoId} className="text-sm font-medium text-gray-700">
+          <label htmlFor={campoId} className="text-sm font-medium text-porta">
             {label}
-            {props.required && <span className="ml-1 text-red-500">*</span>}
+            {props.required && <span className="ml-1 text-sangue">*</span>}
           </label>
         )}
         <textarea
           ref={ref}
           id={campoId}
           className={cn(
-            'min-h-[100px] rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-50',
-            erro && 'border-red-500 focus:border-red-500 focus:ring-red-500',
+            'min-h-[100px] rounded-md border border-pao bg-white px-3 py-2 text-sm text-black shadow-sm placeholder:text-pao focus:border-sangue focus:outline-none focus:ring-1 focus:ring-sangue disabled:cursor-not-allowed disabled:bg-cordeiro',
+            erro && 'border-sangue focus:border-sangue focus:ring-sangue',
             className
           )}
           {...props}
         />
-        {erro && <p className="text-xs text-red-600">{erro}</p>}
+        {erro && <p className="text-xs text-sangue">{erro}</p>}
       </div>
     )
   }
@@ -86,24 +86,24 @@ const Select = forwardRef<HTMLSelectElement, PropsSelect>(
     return (
       <div className="flex flex-col gap-1">
         {label && (
-          <label htmlFor={campoId} className="text-sm font-medium text-gray-700">
+          <label htmlFor={campoId} className="text-sm font-medium text-porta">
             {label}
-            {props.required && <span className="ml-1 text-red-500">*</span>}
+            {props.required && <span className="ml-1 text-sangue">*</span>}
           </label>
         )}
         <select
           ref={ref}
           id={campoId}
           className={cn(
-            'rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-50',
-            erro && 'border-red-500 focus:border-red-500 focus:ring-red-500',
+            'rounded-md border border-pao bg-white px-3 py-2 text-sm text-black shadow-sm focus:border-sangue focus:outline-none focus:ring-1 focus:ring-sangue disabled:cursor-not-allowed disabled:bg-cordeiro',
+            erro && 'border-sangue focus:border-sangue focus:ring-sangue',
             className
           )}
           {...props}
         >
           {children}
         </select>
-        {erro && <p className="text-xs text-red-600">{erro}</p>}
+        {erro && <p className="text-xs text-sangue">{erro}</p>}
       </div>
     )
   }

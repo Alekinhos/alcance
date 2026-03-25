@@ -20,10 +20,10 @@ const Botao = forwardRef<HTMLButtonElement, PropsBotao>(
         className={cn(
           'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
           {
-            'bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-600': variante === 'primario',
-            'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus-visible:ring-gray-500': variante === 'secundario',
-            'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600': variante === 'perigo',
-            'text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-500': variante === 'fantasma',
+            'bg-sangue text-white hover:bg-porta focus-visible:ring-sangue': variante === 'primario',
+            'border border-pao bg-white text-porta hover:bg-cordeiro focus-visible:ring-pao': variante === 'secundario',
+            'bg-sangue text-white hover:bg-porta focus-visible:ring-sangue': variante === 'perigo',
+            'text-porta hover:bg-cordeiro focus-visible:ring-porta': variante === 'fantasma',
           },
           {
             'h-8 px-3 text-sm': tamanho === 'sm',

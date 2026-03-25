@@ -26,7 +26,7 @@ export default async function PaginaPost({ params }: Props) {
     <article className="mx-auto max-w-3xl px-4 py-12">
       <Link
         href="/blog"
-        className="mb-8 flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+        className="mb-8 flex items-center gap-1 text-sm text-sangue hover:text-porta"
       >
         <ArrowLeft className="h-4 w-4" /> Voltar ao Blog
       </Link>
@@ -37,9 +37,9 @@ export default async function PaginaPost({ params }: Props) {
         </div>
       )}
 
-      <h1 className="text-4xl font-bold text-gray-900">{post.titulo}</h1>
+      <h1 className="text-4xl font-bold text-porta">{post.titulo}</h1>
 
-      <div className="mt-4 flex items-center gap-3 text-sm text-gray-500">
+      <div className="mt-4 flex items-center gap-3 text-sm text-pao">
         {post.autor && <span>Por {(post.autor as { nome: string }).nome}</span>}
         <span>•</span>
         <span>{formatarData(post.created_at)}</span>
@@ -50,7 +50,7 @@ export default async function PaginaPost({ params }: Props) {
           {post.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700"
+              className="rounded-full bg-cordeiro px-3 py-1 text-sm text-porta"
             >
               {tag}
             </span>
@@ -59,7 +59,7 @@ export default async function PaginaPost({ params }: Props) {
       )}
 
       <div
-        className="prose prose-gray mt-8 max-w-none"
+        className="prose prose-stone mt-8 max-w-none"
         dangerouslySetInnerHTML={{ __html: post.conteudo }}
       />
     </article>

@@ -37,17 +37,17 @@ export default function PaginaLogin() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-cordeiro px-4">
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-sangue">
             <Church className="h-8 w-8 text-white" />
           </div>
-          <h1 className="mt-4 text-2xl font-bold text-gray-900">Igreja Alcance</h1>
-          <p className="mt-1 text-sm text-gray-500">Entre na sua conta para continuar</p>
+          <h1 className="mt-4 text-2xl font-bold text-porta">Igreja Alcance</h1>
+          <p className="mt-1 text-sm text-pao">Entre na sua conta para continuar</p>
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+        <div className="rounded-xl border border-pao bg-white p-8 shadow-sm">
           <form onSubmit={handleLogin} className="space-y-4">
             <Campo
               label="Email"
@@ -69,14 +69,14 @@ export default function PaginaLogin() {
                 autoComplete="current-password"
               />
               <div className="flex justify-end">
-                <Link href="/auth/esqueci-senha" className="text-xs text-blue-600 hover:text-blue-800">
+                <Link href="/auth/esqueci-senha" className="text-xs text-sangue hover:text-porta">
                   Esqueci a senha
                 </Link>
               </div>
             </div>
 
             {erro && (
-              <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+              <div className="rounded-md bg-red-50 p-3 text-sm text-sangue">
                 {erro}
               </div>
             )}
@@ -86,9 +86,9 @@ export default function PaginaLogin() {
             </Botao>
           </form>
 
-          <p className="mt-4 text-center text-sm text-gray-500">
+          <p className="mt-4 text-center text-sm text-pao">
             Tem um código de convite?{' '}
-            <Link href="/auth/cadastro" className="font-medium text-blue-600 hover:text-blue-800">
+            <Link href="/auth/cadastro" className="font-medium text-sangue hover:text-porta">
               Criar conta
             </Link>
           </p>

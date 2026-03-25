@@ -29,28 +29,28 @@ export default async function PaginaEventos() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
-      <h1 className="text-3xl font-bold text-gray-900">Próximos Eventos</h1>
-      <p className="mt-2 text-gray-500">Fique por dentro de tudo que está acontecendo na igreja.</p>
+      <h1 className="text-3xl font-bold text-porta">Próximos Eventos</h1>
+      <p className="mt-2 text-pao">Fique por dentro de tudo que está acontecendo na igreja.</p>
 
       <div className="mt-8 space-y-4">
         {eventos && eventos.length > 0 ? (
           eventos.map((evento) => (
             <div
               key={evento.id}
-              className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+              className="rounded-lg border border-pao bg-white p-6 shadow-sm"
             >
               <div className="flex items-start justify-between">
                 <div>
                   <Badge variante={variantesTipo[evento.tipo]}>
                     {rotulosTipo[evento.tipo]}
                   </Badge>
-                  <h2 className="mt-2 text-xl font-semibold text-gray-900">{evento.titulo}</h2>
+                  <h2 className="mt-2 text-xl font-semibold text-porta">{evento.titulo}</h2>
                   {evento.descricao && (
-                    <p className="mt-1 text-gray-600">{evento.descricao}</p>
+                    <p className="mt-1 text-pao">{evento.descricao}</p>
                   )}
                 </div>
               </div>
-              <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-500">
+              <div className="mt-4 flex flex-wrap gap-4 text-sm text-pao">
                 <span className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
                   {formatarData(evento.data)}
@@ -71,7 +71,7 @@ export default async function PaginaEventos() {
             </div>
           ))
         ) : (
-          <p className="py-12 text-center text-gray-500">
+          <p className="py-12 text-center text-pao">
             Nenhum evento próximo agendado.
           </p>
         )}
