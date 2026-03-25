@@ -20,9 +20,8 @@ const Botao = forwardRef<HTMLButtonElement, PropsBotao>(
         className={cn(
           'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
           {
-            'bg-sangue text-white hover:bg-porta focus-visible:ring-sangue': variante === 'primario',
+            'bg-sangue text-white hover:bg-porta focus-visible:ring-sangue': variante === 'primario' || variante === 'perigo',
             'border border-pao bg-white text-porta hover:bg-cordeiro focus-visible:ring-pao': variante === 'secundario',
-            'bg-sangue text-white hover:bg-porta focus-visible:ring-sangue': variante === 'perigo',
             'text-porta hover:bg-cordeiro focus-visible:ring-porta': variante === 'fantasma',
           },
           {
