@@ -3,18 +3,42 @@ import { formatarData } from '@/lib/utils'
 import Link from 'next/link'
 import Image from 'next/image'
 import { BookOpen, ArrowRight } from 'lucide-react'
+import { Paginacao } from '@/components/ui/paginacao'
 
-export default async function PaginaBlog() {
+const ITENS_POR_PAGINA = 9
+
+export default async function PaginaBlog({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
   const supabase = await criarClienteServidor()
 
+  const { count } = await supabase
+    .from('posts')
+    .select('*', { count: 'exact', head: true })
+    .eq('publicado', true)
+
+  const totalItens = count ?? 0
+  const totalPaginas = Math.max(1, Math.ceil(totalItens / ITENS_POR_PAGINA))
+
+  const { page } = await searchParams
+  const pagina = Math.min(Math.max(1, parseInt(page ?? '1') || 1), totalPaginas)
+
+  const inicio = (pagina - 1) * ITENS_POR_PAGINA
   const { data: posts } = await supabase
     .from('posts')
     .select('*, autor:profiles(nome)')
     .eq('publicado', true)
     .order('created_at', { ascending: false })
+    .range(inicio, inicio + ITENS_POR_PAGINA - 1)
 
-  const postDestaque = posts?.[0]
-  const demaisposts = posts?.slice(1) ?? []
+  const postDestaque = pagina === 1 ? posts?.[0] : null
+  const demaisposts = pagina === 1 ? (posts?.slice(1) ?? []) : (posts ?? [])
+
+  function gerarHref(n: number) {
+    return n === 1 ? '/blog' : `/blog?page=${n}`
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12">
@@ -25,7 +49,7 @@ export default async function PaginaBlog() {
 
       {posts && posts.length > 0 ? (
         <>
-          {/* Post em destaque */}
+          {/* Post em destaque (apenas na primeira página) */}
           {postDestaque && (
             <Link
               href={`/blog/${postDestaque.id}`}
@@ -131,6 +155,8 @@ export default async function PaginaBlog() {
           <p className="mt-1 text-sm text-pao">Em breve teremos conteúdo para você!</p>
         </div>
       )}
+
+      <Paginacao pagina={pagina} totalPaginas={totalPaginas} gerarHref={gerarHref} />
     </div>
   )
 }

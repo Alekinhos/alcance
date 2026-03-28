@@ -23,7 +23,7 @@ export default async function PaginaAoVivo() {
         <div className="flex items-center gap-2">
           {aoVivo ? (
             <span className="flex items-center gap-1.5 rounded-full bg-sangue px-3 py-1 text-xs font-semibold text-white">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-white" />
+              <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
               AO VIVO
             </span>
           ) : (
