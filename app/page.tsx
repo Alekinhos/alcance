@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Church, Users, Calendar, BookOpen, ArrowRight, Heart, MapPin, Clock } from 'lucide-react'
+import { Church, Users, Calendar, BookOpen, ArrowRight, Heart, MapPin, Clock, Radio } from 'lucide-react'
 import { criarClienteServidor } from '@/lib/supabase/server'
 import { formatarDataCurta } from '@/lib/utils'
 import { NavPublica } from '@/components/layout/nav-publica'
@@ -11,6 +11,7 @@ export default async function PaginaInicial() {
   const [
     { data: proximosEventos },
     { data: ultimosPosts },
+    { data: transmissaoAoVivo },
   ] = await Promise.all([
     supabase
       .from('eventos')
@@ -24,6 +25,12 @@ export default async function PaginaInicial() {
       .eq('publicado', true)
       .order('created_at', { ascending: false })
       .limit(3),
+    supabase
+      .from('transmissoes')
+      .select('*')
+      .eq('ao_vivo', true)
+      .limit(1)
+      .maybeSingle(),
   ])
 
   return (
@@ -78,6 +85,33 @@ export default async function PaginaInicial() {
           </div>
         </div>
       </section>
+
+      {/* Banner Ao Vivo */}
+      {transmissaoAoVivo && (
+        <section className="border-b border-sangue/30 bg-[#111111] py-10">
+          <div className="mx-auto max-w-4xl px-4">
+            <div className="mb-4 flex items-center gap-2">
+              <span className="flex items-center gap-1.5 rounded-full bg-sangue px-3 py-1 text-xs font-semibold text-white">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-white" />
+                AO VIVO
+              </span>
+              <span className="text-sm font-medium text-white">{transmissaoAoVivo.titulo}</span>
+            </div>
+            <Link
+              href="/ao-vivo"
+              className="group flex items-center justify-center gap-3 rounded-xl border border-sangue/50 bg-sangue/10 py-8 text-white transition-colors hover:bg-sangue/20"
+            >
+              <Radio className="h-8 w-8 text-sangue" />
+              <div className="text-left">
+                <p className="text-lg font-bold">Estamos transmitindo agora</p>
+                <p className="mt-0.5 text-sm text-white/60">
+                  Clique para assistir ao culto ao vivo →
+                </p>
+              </div>
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* Stats */}
       <section className="border-b border-pao bg-white">
@@ -284,6 +318,7 @@ export default async function PaginaInicial() {
             <div>
               <h3 className="mb-3 text-sm font-semibold text-white">Acesso rápido</h3>
               <ul className="space-y-2 text-sm">
+                <li><Link href="/ao-vivo" className="hover:text-white">Ao Vivo</Link></li>
                 <li><Link href="/eventos" className="hover:text-white">Eventos</Link></li>
                 <li><Link href="/blog" className="hover:text-white">Blog</Link></li>
                 <li><Link href="/auth/login" className="hover:text-white">Área do membro</Link></li>

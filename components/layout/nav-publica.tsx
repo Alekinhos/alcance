@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 const links = [
   { href: '/eventos', label: 'Eventos' },
   { href: '/blog', label: 'Blog' },
+  { href: '/ao-vivo', label: 'Ao Vivo' },
 ]
 
 export function NavPublica() {
