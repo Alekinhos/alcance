@@ -97,6 +97,39 @@ export interface Database {
         }
         Relationships: []
       }
+      transmissoes: {
+        Row: {
+          id: string
+          titulo: string
+          descricao: string | null
+          youtube_url: string
+          ao_vivo: boolean
+          data: string
+          criado_por: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          titulo: string
+          descricao?: string | null
+          youtube_url: string
+          ao_vivo?: boolean
+          data: string
+          criado_por?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          titulo?: string
+          descricao?: string | null
+          youtube_url?: string
+          ao_vivo?: boolean
+          data?: string
+          criado_por?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       transacoes: {
         Row: {
           id: string
