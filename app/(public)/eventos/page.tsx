@@ -1,6 +1,8 @@
 import { criarClienteServidor } from '@/lib/supabase/server'
-import { Clock, MapPin, Calendar } from 'lucide-react'
+import { Clock, MapPin, Calendar, Repeat } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { Paginacao } from '@/components/ui/paginacao'
+import { expandirEventos } from '@/lib/recorrencia'
 import type { TipoEvento } from '@/types/supabase'
 
 const rotulosTipo: Record<TipoEvento, string> = {
@@ -17,14 +19,33 @@ const variantesTipo: Record<TipoEvento, 'info' | 'sucesso' | 'aviso' | 'padrao'>
   outro: 'padrao',
 }
 
-export default async function PaginaEventos() {
+const ITENS_POR_PAGINA = 10
+
+export default async function PaginaEventos({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
   const supabase = await criarClienteServidor()
 
-  const { data: eventos } = await supabase
+  const { data: eventosRaw } = await supabase
     .from('eventos')
     .select('*')
-    .gte('data', new Date().toISOString().split('T')[0])
     .order('data', { ascending: true })
+
+  const todosEventos = expandirEventos(eventosRaw ?? [])
+  const totalItens = todosEventos.length
+  const totalPaginas = Math.max(1, Math.ceil(totalItens / ITENS_POR_PAGINA))
+
+  const { page } = await searchParams
+  const pagina = Math.min(Math.max(1, parseInt(page ?? '1') || 1), totalPaginas)
+
+  const inicio = (pagina - 1) * ITENS_POR_PAGINA
+  const eventos = todosEventos.slice(inicio, inicio + ITENS_POR_PAGINA)
+
+  function gerarHref(n: number) {
+    return n === 1 ? '/eventos' : `/eventos?page=${n}`
+  }
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
@@ -39,7 +60,7 @@ export default async function PaginaEventos() {
             const data = new Date(evento.data + 'T00:00:00')
             return (
               <div
-                key={evento.id}
+                key={`${evento.id}-${evento.data}`}
                 className="flex gap-4 overflow-hidden rounded-xl border border-pao bg-white shadow-sm transition-shadow hover:shadow-md"
               >
                 {/* Badge de data */}
@@ -57,6 +78,12 @@ export default async function PaginaEventos() {
                     <Badge variante={variantesTipo[evento.tipo]}>
                       {rotulosTipo[evento.tipo]}
                     </Badge>
+                    {evento.recorrente && (
+                      <span className="flex items-center gap-1 text-xs text-pao">
+                        <Repeat className="h-3 w-3" />
+                        {evento.frequencia === 'semanal' ? 'Semanal' : evento.frequencia === 'quinzenal' ? 'Quinzenal' : 'Mensal'}
+                      </span>
+                    )}
                   </div>
                   <h2 className="mt-1.5 text-xl font-semibold text-porta">{evento.titulo}</h2>
                   {evento.descricao && (
@@ -88,6 +115,8 @@ export default async function PaginaEventos() {
           </div>
         )}
       </div>
+
+      <Paginacao pagina={pagina} totalPaginas={totalPaginas} gerarHref={gerarHref} />
     </div>
   )
 }

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Plus, Search } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Botao } from '@/components/ui/botao'
+import { Paginacao } from '@/components/ui/paginacao'
 import type { PapelUsuario } from '@/types/supabase'
 
 const rotulosPapel: Record<PapelUsuario, string> = {
@@ -21,10 +22,12 @@ const variantesPapel: Record<PapelUsuario, 'perigo' | 'aviso' | 'info' | 'padrao
   membro: 'padrao',
 }
 
+const ITENS_POR_PAGINA = 15
+
 export default async function PaginaMembros({
   searchParams,
 }: {
-  searchParams: Promise<{ busca?: string }>
+  searchParams: Promise<{ busca?: string; page?: string }>
 }) {
   const supabase = await criarClienteServidor()
   const { data: { user } } = await supabase.auth.getUser()
@@ -39,20 +42,37 @@ export default async function PaginaMembros({
   const papel = meuPerfil?.papel as PapelUsuario
   if (papel === 'membro') redirect('/dashboard')
 
-  const { busca } = await searchParams
+  const { busca, page } = await searchParams
 
-  let query = supabase.from('profiles').select('*').order('nome')
+  let countQuery = supabase.from('profiles').select('*', { count: 'exact', head: true })
+  if (busca) countQuery = countQuery.ilike('nome', `%${busca}%`)
+  const { count } = await countQuery
+
+  const totalItens = count ?? 0
+  const totalPaginas = Math.max(1, Math.ceil(totalItens / ITENS_POR_PAGINA))
+  const pagina = Math.min(Math.max(1, parseInt(page ?? '1') || 1), totalPaginas)
+  const inicio = (pagina - 1) * ITENS_POR_PAGINA
+
+  let query = supabase.from('profiles').select('*').order('nome').range(inicio, inicio + ITENS_POR_PAGINA - 1)
   if (busca) query = query.ilike('nome', `%${busca}%`)
 
   const { data: membros } = await query
   const podeEditar = papel === 'admin' || papel === 'pastor'
+
+  function gerarHref(n: number) {
+    const params = new URLSearchParams()
+    if (busca) params.set('busca', busca)
+    if (n > 1) params.set('page', String(n))
+    const qs = params.toString()
+    return `/dashboard/membros${qs ? `?${qs}` : ''}`
+  }
 
   return (
     <div className="p-4 lg:p-6">
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-porta">Membros</h1>
-          <p className="mt-1 text-pao">{membros?.length ?? 0} membro(s)</p>
+          <p className="mt-1 text-pao">{totalItens} membro(s)</p>
         </div>
         {podeEditar && (
           <Link href="/dashboard/membros/novo">
@@ -201,6 +221,8 @@ export default async function PaginaMembros({
           </tbody>
         </table>
       </div>
+
+      <Paginacao pagina={pagina} totalPaginas={totalPaginas} gerarHref={gerarHref} />
     </div>
   )
 }

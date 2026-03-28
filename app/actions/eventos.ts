@@ -9,6 +9,8 @@ export async function criarEvento(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
+  const recorrente = formData.get('recorrente') === 'true'
+
   const { error } = await supabase.from('eventos').insert({
     titulo: formData.get('titulo') as string,
     descricao: (formData.get('descricao') as string) || null,
@@ -16,6 +18,9 @@ export async function criarEvento(formData: FormData) {
     hora: (formData.get('hora') as string) || null,
     local: (formData.get('local') as string) || null,
     tipo: (formData.get('tipo') as 'culto' | 'reuniao' | 'retiro' | 'outro'),
+    recorrente,
+    frequencia: recorrente ? (formData.get('frequencia') as string) || null : null,
+    data_fim_recorrencia: recorrente ? (formData.get('data_fim_recorrencia') as string) || null : null,
     criado_por: user.id,
   })
 
@@ -31,6 +36,8 @@ export async function atualizarEvento(id: string, formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
+  const recorrente = formData.get('recorrente') === 'true'
+
   const { error } = await supabase
     .from('eventos')
     .update({
@@ -40,6 +47,9 @@ export async function atualizarEvento(id: string, formData: FormData) {
       hora: (formData.get('hora') as string) || null,
       local: (formData.get('local') as string) || null,
       tipo: (formData.get('tipo') as 'culto' | 'reuniao' | 'retiro' | 'outro'),
+      recorrente,
+      frequencia: recorrente ? (formData.get('frequencia') as string) || null : null,
+      data_fim_recorrencia: recorrente ? (formData.get('data_fim_recorrencia') as string) || null : null,
     })
     .eq('id', id)
 
