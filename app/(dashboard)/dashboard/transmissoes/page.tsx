@@ -55,7 +55,7 @@ export default async function PaginaTransmissoes() {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   {t.ao_vivo ? (
-                    <Badge variante="erro">
+                    <Badge variante="perigo">
                       <span className="mr-1 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
                       Ao Vivo
                     </Badge>
