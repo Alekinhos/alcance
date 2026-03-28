@@ -25,6 +25,7 @@ export default function LayoutPublico({
             <div>
               <h3 className="mb-3 text-sm font-semibold text-white">Acesso rápido</h3>
               <ul className="space-y-2 text-sm">
+                <li><Link href="/ao-vivo" className="hover:text-white">Ao Vivo</Link></li>
                 <li><Link href="/eventos" className="hover:text-white">Eventos</Link></li>
                 <li><Link href="/blog" className="hover:text-white">Blog</Link></li>
                 <li><Link href="/auth/login" className="hover:text-white">Área do membro</Link></li>
