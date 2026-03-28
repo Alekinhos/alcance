@@ -1,0 +1,83 @@
+'use client'
+
+import { useState } from 'react'
+import { criarTransacao } from '@/app/actions/financeiro'
+import { Campo, Textarea, Select } from '@/components/ui/campo'
+import { Botao } from '@/components/ui/botao'
+import { BuscaMembro } from '@/components/ui/busca-membro'
+import { ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
+
+interface Props {
+  membros: { id: string; nome: string }[]
+}
+
+export function FormularioNovaTransacao({ membros }: Props) {
+  const [erro, setErro] = useState('')
+  const [carregando, setCarregando] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setErro('')
+    setCarregando(true)
+
+    const dados = new FormData(e.currentTarget)
+    const resultado = await criarTransacao(dados)
+
+    if (resultado?.erro) {
+      setErro(resultado.erro)
+      setCarregando(false)
+    }
+  }
+
+  return (
+    <div className="p-4 lg:p-6">
+      <div className="mb-6">
+        <Link
+          href="/dashboard/financeiro"
+          className="mb-4 flex items-center gap-1 text-sm text-porta hover:text-sangue"
+        >
+          <ArrowLeft className="h-4 w-4" /> Voltar
+        </Link>
+        <h1 className="text-2xl font-bold text-porta">Nova Entrada Financeira</h1>
+      </div>
+
+      <div className="max-w-lg rounded-lg border border-pao bg-white p-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Select label="Tipo" name="tipo" required>
+              <option value="dizimo">Dízimo</option>
+              <option value="oferta">Oferta</option>
+              <option value="doacao">Doação</option>
+              <option value="outro">Outro</option>
+            </Select>
+            <Campo label="Valor (R$)" name="valor" type="number" step="0.01" min="0" required />
+          </div>
+
+          <Campo
+            label="Data"
+            name="data"
+            type="date"
+            required
+            defaultValue={new Date().toISOString().split('T')[0]}
+          />
+
+          <BuscaMembro membros={membros} />
+
+          <Textarea label="Descrição" name="descricao" />
+
+          {erro && (
+            <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">{erro}</div>
+          )}
+
+          <div className="flex justify-end gap-3 pt-2">
+            <Link href="/dashboard/financeiro">
+              <Botao type="button" variante="secundario">Cancelar</Botao>
+            </Link>
+            <Botao type="submit" carregando={carregando}>Registrar</Botao>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}

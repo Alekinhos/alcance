@@ -8,9 +8,9 @@ export default function LayoutPublico({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-cordeiro">
+    <div className="flex min-h-screen flex-col bg-cordeiro">
       <NavPublica />
-      <main>{children}</main>
+      <main className="flex-1">{children}</main>
       <footer className="bg-[#111111] py-12 text-white/50">
         <div className="mx-auto max-w-6xl px-4">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">

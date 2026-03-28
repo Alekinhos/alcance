@@ -2,10 +2,10 @@ import { criarClienteServidor } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatarDataCurta } from '@/lib/utils'
-import { Plus, Pencil, Trash2, FileText } from 'lucide-react'
+import { Plus, Pencil, FileText } from 'lucide-react'
 import { Botao } from '@/components/ui/botao'
 import { Badge } from '@/components/ui/badge'
-import { excluirPost } from '@/app/actions/blog'
+import { BotaoExcluirPost } from '@/components/blog/botao-excluir-post'
 import type { PapelUsuario } from '@/types/supabase'
 
 export default async function PaginaBlogDashboard() {
@@ -31,8 +31,8 @@ export default async function PaginaBlogDashboard() {
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Blog</h1>
-          <p className="mt-1 text-gray-500">{posts?.length ?? 0} post(s)</p>
+          <h1 className="text-2xl font-bold text-porta">Blog</h1>
+          <p className="mt-1 text-pao">{posts?.length ?? 0} post(s)</p>
         </div>
         <Link href="/dashboard/blog/novo">
           <Botao>
@@ -46,16 +46,16 @@ export default async function PaginaBlogDashboard() {
           posts.map((post) => (
             <div
               key={post.id}
-              className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4"
+              className="flex items-center justify-between rounded-lg border border-pao bg-white p-4"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <Badge variante={post.publicado ? 'sucesso' : 'aviso'}>
                     {post.publicado ? 'Publicado' : 'Rascunho'}
                   </Badge>
-                  <h3 className="font-medium text-gray-900">{post.titulo}</h3>
+                  <h3 className="font-medium text-porta">{post.titulo}</h3>
                 </div>
-                <div className="mt-1 flex items-center gap-3 text-xs text-gray-500">
+                <div className="mt-1 flex items-center gap-3 text-xs text-pao">
                   {post.autor && <span>Por {(post.autor as { nome: string }).nome}</span>}
                   <span>•</span>
                   <span>{formatarDataCurta(post.created_at)}</span>
@@ -74,23 +74,14 @@ export default async function PaginaBlogDashboard() {
                     <Pencil className="h-4 w-4" />
                   </Botao>
                 </Link>
-                <form
-                  action={async () => {
-                    'use server'
-                    await excluirPost(post.id)
-                  }}
-                >
-                  <Botao variante="fantasma" tamanho="sm" type="submit">
-                    <Trash2 className="h-4 w-4 text-red-500" />
-                  </Botao>
-                </form>
+                <BotaoExcluirPost id={post.id} />
               </div>
             </div>
           ))
         ) : (
-          <div className="rounded-lg border border-dashed border-gray-300 p-12 text-center">
-            <FileText className="mx-auto h-12 w-12 text-gray-400" />
-            <p className="mt-2 text-gray-500">Nenhum post criado ainda.</p>
+          <div className="rounded-lg border border-dashed border-pao p-12 text-center">
+            <FileText className="mx-auto h-12 w-12 text-pao" />
+            <p className="mt-2 text-pao">Nenhum post criado ainda.</p>
             <Link href="/dashboard/blog/novo" className="mt-4 inline-block">
               <Botao variante="secundario" tamanho="sm">Criar primeiro post</Botao>
             </Link>
