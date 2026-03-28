@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Church } from 'lucide-react'
+import { NavPublica } from '@/components/layout/nav-publica'
 
 export default function LayoutPublico({
   children,
@@ -7,33 +8,41 @@ export default function LayoutPublico({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-cordeiro">
-      <header className="border-b border-pao bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <Link href="/" className="flex items-center gap-2 text-porta">
-            <Church className="h-6 w-6 text-sangue" />
-            <span className="font-bold">Igreja Alcance</span>
-          </Link>
-          <nav className="flex items-center gap-6">
-            <Link href="/eventos" className="text-sm text-pao hover:text-porta">
-              Eventos
-            </Link>
-            <Link href="/blog" className="text-sm text-pao hover:text-porta">
-              Blog
-            </Link>
-            <Link
-              href="/auth/login"
-              className="rounded-md bg-sangue px-4 py-2 text-sm font-medium text-white hover:bg-porta"
-            >
-              Entrar
-            </Link>
-          </nav>
-        </div>
-      </header>
-      <main>{children}</main>
-      <footer className="mt-16 border-t border-pao bg-white py-8">
-        <div className="mx-auto max-w-6xl px-4 text-center text-sm text-pao">
-          © {new Date().getFullYear()} Igreja Alcance. Todos os direitos reservados.
+    <div className="flex min-h-screen flex-col bg-cordeiro">
+      <NavPublica />
+      <main className="flex-1">{children}</main>
+      <footer className="bg-[#111111] py-12 text-white/50">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <div>
+              <div className="mb-3 flex items-center gap-2">
+                <Church className="h-5 w-5 text-sangue" />
+                <span className="font-bold text-white">Igreja Alcance</span>
+              </div>
+              <p className="text-sm">Inspirando pessoas a viver para Jesus.</p>
+            </div>
+
+            <div>
+              <h3 className="mb-3 text-sm font-semibold text-white">Acesso rápido</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/eventos" className="hover:text-white">Eventos</Link></li>
+                <li><Link href="/blog" className="hover:text-white">Blog</Link></li>
+                <li><Link href="/auth/login" className="hover:text-white">Área do membro</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="mb-3 text-sm font-semibold text-white">Conta</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/auth/cadastro" className="hover:text-white">Cadastrar</Link></li>
+                <li><Link href="/auth/esqueci-senha" className="hover:text-white">Recuperar senha</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs">
+            © {new Date().getFullYear()} Igreja Alcance. Todos os direitos reservados.
+          </div>
         </div>
       </footer>
     </div>

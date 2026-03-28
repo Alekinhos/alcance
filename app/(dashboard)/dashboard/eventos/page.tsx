@@ -2,10 +2,10 @@ import { criarClienteServidor } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatarDataCurta } from '@/lib/utils'
-import { Plus, Calendar, Clock, MapPin, Pencil, Trash2 } from 'lucide-react'
+import { Plus, Calendar, Clock, MapPin, Pencil } from 'lucide-react'
 import { Botao } from '@/components/ui/botao'
 import { Badge } from '@/components/ui/badge'
-import { excluirEvento } from '@/app/actions/eventos'
+import { BotaoExcluirEvento } from '@/components/eventos/botao-excluir-evento'
 import type { PapelUsuario, TipoEvento } from '@/types/supabase'
 
 const rotulosTipo: Record<TipoEvento, string> = {
@@ -91,16 +91,7 @@ export default async function PaginaEventosDashboard() {
                       <Pencil className="h-4 w-4" />
                     </Botao>
                   </Link>
-                  <form
-                    action={async () => {
-                      'use server'
-                      await excluirEvento(evento.id)
-                    }}
-                  >
-                    <Botao variante="fantasma" tamanho="sm" type="submit">
-                      <Trash2 className="h-4 w-4 text-sangue" />
-                    </Botao>
-                  </form>
+                  <BotaoExcluirEvento id={evento.id} />
                 </div>
               )}
             </div>
