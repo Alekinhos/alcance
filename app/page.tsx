@@ -4,21 +4,20 @@ import { Church, Users, Calendar, BookOpen, ArrowRight, Heart, MapPin, Clock, Ra
 import { criarClienteServidor } from '@/lib/supabase/server'
 import { formatarDataCurta } from '@/lib/utils'
 import { NavPublica } from '@/components/layout/nav-publica'
+import { expandirEventos } from '@/lib/recorrencia'
 
 export default async function PaginaInicial() {
   const supabase = await criarClienteServidor()
 
   const [
-    { data: proximosEventos },
+    { data: eventosRaw },
     { data: ultimosPosts },
     { data: transmissaoAoVivo },
   ] = await Promise.all([
     supabase
       .from('eventos')
       .select('*')
-      .gte('data', new Date().toISOString().split('T')[0])
-      .order('data', { ascending: true })
-      .limit(3),
+      .order('data', { ascending: true }),
     supabase
       .from('posts')
       .select('*, autor:profiles(nome)')
@@ -32,6 +31,8 @@ export default async function PaginaInicial() {
       .limit(1)
       .maybeSingle(),
   ])
+
+  const proximosEventos = expandirEventos(eventosRaw ?? []).slice(0, 3)
 
   return (
     <div className="min-h-screen">
@@ -92,7 +93,7 @@ export default async function PaginaInicial() {
           <div className="mx-auto max-w-4xl px-4">
             <div className="mb-4 flex items-center gap-2">
               <span className="flex items-center gap-1.5 rounded-full bg-sangue px-3 py-1 text-xs font-semibold text-white">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-white" />
+                <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
                 AO VIVO
               </span>
               <span className="text-sm font-medium text-white">{transmissaoAoVivo.titulo}</span>
@@ -187,7 +188,7 @@ export default async function PaginaInicial() {
               {proximosEventos.map((evento) => {
                 const data = new Date(evento.data + 'T00:00:00')
                 return (
-                  <div key={evento.id} className="flex gap-4 rounded-xl border border-pao bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+                  <div key={`${evento.id}-${evento.data}`} className="flex gap-4 rounded-xl border border-pao bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
                     {/* Badge data */}
                     <div className="flex w-14 shrink-0 flex-col items-center justify-center rounded-lg bg-sangue py-3 text-white">
                       <span className="text-2xl font-bold leading-none">

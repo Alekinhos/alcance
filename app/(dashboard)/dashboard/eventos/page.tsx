@@ -2,7 +2,7 @@ import { criarClienteServidor } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatarDataCurta } from '@/lib/utils'
-import { Plus, Calendar, Clock, MapPin, Pencil } from 'lucide-react'
+import { Plus, Calendar, Clock, MapPin, Pencil, Repeat } from 'lucide-react'
 import { Botao } from '@/components/ui/botao'
 import { Badge } from '@/components/ui/badge'
 import { BotaoExcluirEvento } from '@/components/eventos/botao-excluir-evento'
@@ -56,12 +56,18 @@ export default async function PaginaEventosDashboard() {
         {eventos && eventos.length > 0 ? (
           eventos.map((evento) => (
             <div
-              key={evento.id}
+              key={`${evento.id}-${evento.data}`}
               className="flex items-start justify-between gap-3 rounded-lg border border-pao bg-white p-4"
             >
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge>{rotulosTipo[evento.tipo]}</Badge>
+                  {evento.recorrente && (
+                    <Badge variante="aviso">
+                      <Repeat className="mr-1 h-3 w-3" />
+                      {evento.frequencia === 'semanal' ? 'Semanal' : evento.frequencia === 'quinzenal' ? 'Quinzenal' : 'Mensal'}
+                    </Badge>
+                  )}
                   <h3 className="font-medium text-porta">{evento.titulo}</h3>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-3 text-sm text-pao">
