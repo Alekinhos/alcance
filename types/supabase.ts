@@ -249,6 +249,48 @@ export interface Database {
         }
         Relationships: []
       }
+      documentos: {
+        Row: {
+          id: string
+          titulo: string
+          descricao: string | null
+          categoria: 'ata' | 'contrato' | 'estatuto' | 'relatorio' | 'outro'
+          arquivo_url: string
+          arquivo_path: string
+          arquivo_nome: string
+          arquivo_tamanho: number | null
+          arquivo_tipo: string | null
+          criado_por: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          titulo: string
+          descricao?: string | null
+          categoria: 'ata' | 'contrato' | 'estatuto' | 'relatorio' | 'outro'
+          arquivo_url: string
+          arquivo_path: string
+          arquivo_nome: string
+          arquivo_tamanho?: number | null
+          arquivo_tipo?: string | null
+          criado_por?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          titulo?: string
+          descricao?: string | null
+          categoria?: 'ata' | 'contrato' | 'estatuto' | 'relatorio' | 'outro'
+          arquivo_url?: string
+          arquivo_path?: string
+          arquivo_nome?: string
+          arquivo_tamanho?: number | null
+          arquivo_tipo?: string | null
+          criado_por?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: { [_ in never]: never }
     Functions: { [_ in never]: never }
@@ -267,3 +309,5 @@ export type Evento = Database['public']['Tables']['eventos']['Row']
 export type Transacao = Database['public']['Tables']['transacoes']['Row']
 export type Post = Database['public']['Tables']['posts']['Row']
 export type Convite = Database['public']['Tables']['convites']['Row']
+export type Documento = Database['public']['Tables']['documentos']['Row']
+export type CategoriaDocumento = Documento['categoria']

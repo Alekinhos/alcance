@@ -15,6 +15,7 @@ import {
   Menu,
   X,
   Radio,
+  FolderOpen,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { criarClienteSupabase } from '@/lib/supabase/client'
@@ -61,6 +62,12 @@ const itensNav = [
     rotulo: 'Transmissões',
     icone: Radio,
     papeis: ['admin', 'pastor', 'lider'] as PapelUsuario[],
+  },
+  {
+    href: '/dashboard/documentos',
+    rotulo: 'Documentos',
+    icone: FolderOpen,
+    papeis: ['admin', 'pastor', 'lider', 'membro'] as PapelUsuario[],
   },
   {
     href: '/dashboard/convites',

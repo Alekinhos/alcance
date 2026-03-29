@@ -18,7 +18,19 @@
       "Bash(git commit -m \"feat: sistema completo de gestão da Igreja Alcance:*)",
       "Bash(git push:*)",
       "Bash(supabase migration:*)",
-      "Bash(git commit -m \"feat: módulo de convites para cadastro híbrido:*)"
+      "Bash(git commit -m \"feat: módulo de convites para cadastro híbrido:*)",
+      "Bash(supabase auth:*)",
+      "Bash(node:*)",
+      "Bash(\"/c/Program Files/nodejs/node.exe\" node_modules/vitest/vitest.mjs run)",
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:freechapel.org)",
+      "WebSearch",
+      "Bash(git commit:*)",
+      "Bash(gh pr:*)",
+      "Bash(ls C:/Users/Alek/Desktop/Alcance/app/\\\\\\(public\\\\\\)/)",
+      "Bash(Remove-Item -Recurse -Force \"C:\\\\Users\\\\Alek\\\\Desktop\\\\Alcance\\\\.next\")",
+      "Bash(curl -s -X POST \"https://ajnuamrocgionuqhknav.supabase.co/rest/v1/rpc/query\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqbnVhbXJvY2dpb251cWhrbmF2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDEwMzU3NCwiZXhwIjoyMDg5Njc5NTc0fQ.DGfMPI54LNbYSwEo7KtjCejSTw-EykoGji58yMN_NHw\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqbnVhbXJvY2dpb251cWhrbmF2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDEwMzU3NCwiZXhwIjoyMDg5Njc5NTc0fQ.DGfMPI54LNbYSwEo7KtjCejSTw-EykoGji58yMN_NHw\" -H \"Content-Type: application/json\" -d '{\"\"query\"\": \"\"select 1\"\"}')",
+      "Bash(curl -s -X POST \"https://ajnuamrocgionuqhknav.supabase.co/pg/query\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqbnVhbXJvY2dpb251cWhrbmF2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDEwMzU3NCwiZXhwIjoyMDg5Njc5NTc0fQ.DGfMPI54LNbYSwEo7KtjCejSTw-EykoGji58yMN_NHw\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqbnVhbXJvY2dpb251cWhrbmF2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDEwMzU3NCwiZXhwIjoyMDg5Njc5NTc0fQ.DGfMPI54LNbYSwEo7KtjCejSTw-EykoGji58yMN_NHw\" -H \"Content-Type: application/json\" -d '{\"\"query\"\": \"\"select 1\"\"}')"
     ]
   }
 }
