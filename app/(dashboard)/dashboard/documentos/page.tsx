@@ -59,7 +59,7 @@ export default async function PaginaDocumentos({
 
   const { busca, categoria } = await searchParams
 
-  let query = supabase.from('documentos').select('*, criador:profiles!documentos_criado_por_fkey(nome)').order('created_at', { ascending: false })
+  let query = supabase.from('documentos').select('*').order('created_at', { ascending: false })
   if (busca) query = query.ilike('titulo', `%${busca}%`)
   if (categoria) query = query.eq('categoria', categoria as CategoriaDocumento)
 
@@ -147,12 +147,6 @@ export default async function PaginaDocumentos({
                   <span>{formatarTamanho(doc.arquivo_tamanho)}</span>
                   <span>·</span>
                   <span>{formatarDataCurta(doc.created_at)}</span>
-                  {doc.criador && (
-                    <>
-                      <span>·</span>
-                      <span>por {(doc.criador as { nome: string }).nome}</span>
-                    </>
-                  )}
                 </div>
               </div>
 
