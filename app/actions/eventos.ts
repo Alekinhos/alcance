@@ -19,7 +19,7 @@ export async function criarEvento(formData: FormData) {
     local: (formData.get('local') as string) || null,
     tipo: (formData.get('tipo') as 'culto' | 'reuniao' | 'retiro' | 'outro'),
     recorrente,
-    frequencia: recorrente ? (formData.get('frequencia') as string) || null : null,
+    frequencia: recorrente ? (formData.get('frequencia') as 'semanal' | 'quinzenal' | 'mensal') || null : null,
     data_fim_recorrencia: recorrente ? (formData.get('data_fim_recorrencia') as string) || null : null,
     criado_por: user.id,
   })
@@ -48,7 +48,7 @@ export async function atualizarEvento(id: string, formData: FormData) {
       local: (formData.get('local') as string) || null,
       tipo: (formData.get('tipo') as 'culto' | 'reuniao' | 'retiro' | 'outro'),
       recorrente,
-      frequencia: recorrente ? (formData.get('frequencia') as string) || null : null,
+      frequencia: recorrente ? (formData.get('frequencia') as 'semanal' | 'quinzenal' | 'mensal') || null : null,
       data_fim_recorrencia: recorrente ? (formData.get('data_fim_recorrencia') as string) || null : null,
     })
     .eq('id', id)
