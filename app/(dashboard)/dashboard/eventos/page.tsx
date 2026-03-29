@@ -2,7 +2,7 @@ import { criarClienteServidor } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatarDataCurta } from '@/lib/utils'
-import { Plus, Calendar, Clock, MapPin, Pencil, Repeat } from 'lucide-react'
+import { Plus, Calendar, Clock, MapPin, Pencil, Repeat, Search, X } from 'lucide-react'
 import { Botao } from '@/components/ui/botao'
 import { Badge } from '@/components/ui/badge'
 import { BotaoExcluirEvento } from '@/components/eventos/botao-excluir-evento'
@@ -15,7 +15,14 @@ const rotulosTipo: Record<TipoEvento, string> = {
   outro: 'Evento',
 }
 
-export default async function PaginaEventosDashboard() {
+const inputClasse =
+  'rounded-md border border-pao bg-white px-3 py-2 text-sm text-black focus:border-sangue focus:outline-none focus:ring-1 focus:ring-sangue'
+
+export default async function PaginaEventosDashboard({
+  searchParams,
+}: {
+  searchParams: Promise<{ busca?: string; data_de?: string; data_ate?: string; tipo?: string }>
+}) {
   const supabase = await criarClienteServidor()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
@@ -29,10 +36,17 @@ export default async function PaginaEventosDashboard() {
   const papel = perfil?.papel as PapelUsuario
   const podeEditar = papel === 'admin' || papel === 'pastor' || papel === 'lider'
 
-  const { data: eventos } = await supabase
-    .from('eventos')
-    .select('*')
-    .order('data', { ascending: false })
+  const { busca, data_de, data_ate, tipo } = await searchParams
+
+  let query = supabase.from('eventos').select('*').order('data', { ascending: false })
+  if (busca) query = query.ilike('titulo', `%${busca}%`)
+  if (data_de) query = query.gte('data', data_de)
+  if (data_ate) query = query.lte('data', data_ate)
+  if (tipo) query = query.eq('tipo', tipo)
+
+  const { data: eventos } = await query
+
+  const temFiltro = !!(busca || data_de || data_ate || tipo)
 
   return (
     <div className="p-4 lg:p-6">
@@ -51,6 +65,59 @@ export default async function PaginaEventosDashboard() {
           </Link>
         )}
       </div>
+
+      {/* Filtros */}
+      <form className="mb-4 flex flex-wrap items-end gap-2">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-pao" />
+          <input
+            name="busca"
+            defaultValue={busca}
+            type="search"
+            placeholder="Buscar por título..."
+            className={`${inputClasse} pl-9 w-48`}
+          />
+        </div>
+
+        <select name="tipo" defaultValue={tipo ?? ''} className={inputClasse}>
+          <option value="">Todos os tipos</option>
+          <option value="culto">Culto</option>
+          <option value="reuniao">Reunião</option>
+          <option value="retiro">Retiro</option>
+          <option value="outro">Outro</option>
+        </select>
+
+        <div className="flex items-center gap-1">
+          <input
+            name="data_de"
+            defaultValue={data_de}
+            type="date"
+            className={inputClasse}
+            title="De"
+          />
+          <span className="text-pao text-sm">até</span>
+          <input
+            name="data_ate"
+            defaultValue={data_ate}
+            type="date"
+            className={inputClasse}
+            title="Até"
+          />
+        </div>
+
+        <button type="submit" className={`${inputClasse} bg-sangue text-white border-sangue hover:bg-porta px-4`}>
+          Filtrar
+        </button>
+
+        {temFiltro && (
+          <Link
+            href="/dashboard/eventos"
+            className="flex items-center gap-1 text-sm text-pao hover:text-sangue"
+          >
+            <X className="h-3.5 w-3.5" /> Limpar
+          </Link>
+        )}
+      </form>
 
       <div className="space-y-3">
         {eventos && eventos.length > 0 ? (
@@ -105,8 +172,10 @@ export default async function PaginaEventosDashboard() {
         ) : (
           <div className="rounded-lg border border-dashed border-pao p-12 text-center">
             <Calendar className="mx-auto h-12 w-12 text-pao" />
-            <p className="mt-2 text-pao">Nenhum evento cadastrado.</p>
-            {podeEditar && (
+            <p className="mt-2 text-pao">
+              {temFiltro ? 'Nenhum evento encontrado com esses filtros.' : 'Nenhum evento cadastrado.'}
+            </p>
+            {!temFiltro && podeEditar && (
               <Link href="/dashboard/eventos/novo" className="mt-4 inline-block">
                 <Botao variante="secundario" tamanho="sm">
                   Criar primeiro evento
