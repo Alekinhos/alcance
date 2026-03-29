@@ -61,7 +61,7 @@ export default async function PaginaDocumentos({
 
   let query = supabase.from('documentos').select('*, criador:profiles!documentos_criado_por_fkey(nome)').order('created_at', { ascending: false })
   if (busca) query = query.ilike('titulo', `%${busca}%`)
-  if (categoria) query = query.eq('categoria', categoria)
+  if (categoria) query = query.eq('categoria', categoria as CategoriaDocumento)
 
   const { data: documentos } = await query
 
