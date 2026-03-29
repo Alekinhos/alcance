@@ -42,7 +42,7 @@ export default async function PaginaEventosDashboard({
   if (busca) query = query.ilike('titulo', `%${busca}%`)
   if (data_de) query = query.gte('data', data_de)
   if (data_ate) query = query.lte('data', data_ate)
-  if (tipo) query = query.eq('tipo', tipo)
+  if (tipo) query = query.eq('tipo', tipo as TipoEvento)
 
   const { data: eventos } = await query
 
